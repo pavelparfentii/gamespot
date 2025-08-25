@@ -27,6 +27,37 @@ export const useUserStore = defineStore('user', {
       this.user = { ...this.user, ...user }
       this.auth = true
     },
+    async getUserProfile(uid) {
+      const userDoc = await getDoc(doc(DB, 'users', uid))
+      if (userDoc.exists()) {
+        return userDoc.data()
+      } else {
+        throw new Error('User not found')
+      }
+    },
+
+    async signIn(formData) {
+      try {
+        this.loading = true
+
+        const response = await signInWithEmailAndPassword(AUTH, formData.email, formData.password)
+
+        const getUserData = await this.getUserProfile(response.user.uid)
+
+        //update local state
+        if (getUserData) {
+          this.setUser(getUserData)
+        }
+
+        //redirect user
+        router.push({ name: 'dashboard' })
+      } catch (error) {
+        throw new Error(error.code)
+      } finally {
+        this.loading = false
+      }
+    },
+
     async register(formData) {
       try {
         this.loading = true

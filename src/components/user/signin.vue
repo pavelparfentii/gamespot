@@ -69,6 +69,7 @@ const onSubmit = (values, { resetForm }) => {
     userStore.register(values)
   } else {
     //login
+    userStore.signIn(values)
   }
   // userStore.register(values)
   //   resetForm()
