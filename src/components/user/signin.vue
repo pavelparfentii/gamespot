@@ -1,7 +1,12 @@
 <template>
   <div class="signin_container">
     <!-- Loader -->
-    <Form :validation-schema="formSchema" @submit="onSubmit">
+
+    <div v-show="userStore.loading" class="text-center">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </div>
+
+    <Form :validation-schema="formSchema" @submit="onSubmit" v-show="!userStore.loading">
       <h1 v-text="!type ? 'Sign In' : 'Register'"></h1>
       <div class="form-group">
         <Field name="email" v-slot="{ field, errorMessage, errors }" value="'pavelprfnt@gmail.com'">
@@ -60,7 +65,12 @@ const formSchema = yup.object({
 })
 
 const onSubmit = (values, { resetForm }) => {
-  userStore.register(values)
+  if (type.value) {
+    userStore.register(values)
+  } else {
+    //login
+  }
+  // userStore.register(values)
   //   resetForm()
 }
 </script>

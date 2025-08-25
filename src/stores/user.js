@@ -23,7 +23,42 @@ export const useUserStore = defineStore('user', {
     // isLoggedIn: (state) => !!state.user,
   },
   actions: {
-    async register(formData) {},
+    setUser(user) {
+      this.user = { ...this.user, ...user }
+      this.auth = true
+    },
+    async register(formData) {
+      try {
+        this.loading = true
+
+        //register user
+        const response = await createUserWithEmailAndPassword(
+          AUTH,
+          formData.email,
+          formData.password,
+        )
+
+        //add user to db
+        const newUser = {
+          uid: response.user.uid,
+          email: formData.email,
+          // firstname: null,
+          // lastname: null,
+          isAdmin: false,
+        }
+        // update user state
+        this.setUser(newUser)
+
+        await setDoc(doc(DB, 'users', response.user.uid), newUser)
+
+        //redirect user
+        router.push({ name: 'dashboard' })
+      } catch (error) {
+        throw new Error(error.code)
+      } finally {
+        this.loading = false
+      }
+    },
     // setUser(user) {
     //   this.user = user
     // },
