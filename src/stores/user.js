@@ -38,6 +38,17 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    async autoSignIn(uid) {
+      try {
+        const userData = await this.getUserProfile(uid)
+        //update local state
+        this.setUser(userData)
+        return true
+      } catch (error) {
+        console.error('Error during auto sign-in:', error)
+      }
+    },
+
     async signIn(formData) {
       try {
         this.loading = true
