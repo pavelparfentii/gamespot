@@ -53,6 +53,10 @@ import { ref } from 'vue'
 import { Field, Form } from 'vee-validate'
 import * as yup from 'yup'
 
+//Toasts
+import { useToast } from 'vue-toast-notification'
+const $toast = useToast()
+
 const type = ref(false)
 
 //AUTH Store
@@ -74,4 +78,15 @@ const onSubmit = (values, { resetForm }) => {
   // userStore.register(values)
   //   resetForm()
 }
+
+userStore.$onAction(({ name, after, onError }) => {
+  if (name === 'register' || name === 'signIn') {
+    after(() => {
+      $toast.success('Authentication successful!')
+    })
+    onError((error) => {
+      $toast.error(error.message)
+    })
+  }
+})
 </script>

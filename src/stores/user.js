@@ -5,6 +5,8 @@ import { DB, AUTH } from '@/utils/firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
+import errorCodes from '@/utils/fbcodes'
+
 const DEFAULT_USER = {
   uid: null,
   email: null,
@@ -52,7 +54,7 @@ export const useUserStore = defineStore('user', {
         //redirect user
         router.push({ name: 'dashboard' })
       } catch (error) {
-        throw new Error(error.code)
+        throw new Error(errorCodes(error.code))
       } finally {
         this.loading = false
       }
@@ -85,7 +87,7 @@ export const useUserStore = defineStore('user', {
         //redirect user
         router.push({ name: 'dashboard' })
       } catch (error) {
-        throw new Error(error.code)
+        throw new Error(errorCodes(error.code))
       } finally {
         this.loading = false
       }
