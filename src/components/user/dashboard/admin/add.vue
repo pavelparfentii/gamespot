@@ -1,0 +1,1 @@
+<template>Add article</template>

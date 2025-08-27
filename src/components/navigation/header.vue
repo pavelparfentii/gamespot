@@ -6,11 +6,13 @@
       </div>
       <div>
         <ul>
-          <li><router-link :to="{ name: 'signin' }">Sign in</router-link></li>
+          <li v-if="!userStore.auth">
+            <router-link :to="{ name: 'signin' }">Sign in</router-link>
+          </li>
           <!-- <li><router-link to="{name: 'about'}">About</router-link></li>
         <li><router-link to="{name: 'contact'}">Contact</router-link></li>l -->
-          <span>
-            <li><span>Logout</span></li>
+          <span v-if="userStore.auth">
+            <li @click="userStore.signOut()"><span>Logout</span></li>
             <li><router-link :to="{ name: 'dashboard' }">Dashboard</router-link></li>
           </span>
         </ul>
@@ -18,3 +20,9 @@
     </div>
   </header>
 </template>
+
+<script setup>
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+</script>

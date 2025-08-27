@@ -37,6 +37,16 @@ export const useUserStore = defineStore('user', {
         throw new Error('User not found')
       }
     },
+    async signOut() {
+      try {
+        await AUTH.signOut()
+        this.user = DEFAULT_USER
+        this.auth = false
+        router.push({ name: 'home' })
+      } catch (error) {
+        console.error('Error during logout:', error)
+      }
+    },
 
     async autoSignIn(uid) {
       try {
