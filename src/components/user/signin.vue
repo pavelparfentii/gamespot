@@ -9,7 +9,7 @@
     <Form :validation-schema="formSchema" @submit="onSubmit" v-show="!userStore.loading">
       <h1 v-text="!type ? 'Sign In' : 'Register'"></h1>
       <div class="form-group">
-        <Field name="email" v-slot="{ field, errorMessage, errors }" value="'pavelprfnt@gmail.com'">
+        <Field name="email" v-slot="{ field, errorMessage, errors }" value="pavelprfnt@gmail.com">
           <input
             type="email"
             placeholder="Enter your email"
