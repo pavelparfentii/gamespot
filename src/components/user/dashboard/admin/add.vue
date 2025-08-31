@@ -80,6 +80,9 @@ import { ref } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { addArticleSchema } from './addSchema'
 import WISYWIG from '@/utils/wisywig.vue'
+import { useArticlesStore } from '@/stores/articles'
+
+const articlesStore = useArticlesStore()
 
 const ratingArray = [0, 1, 2, 3, 4, 5]
 
