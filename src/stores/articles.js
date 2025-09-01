@@ -16,6 +16,7 @@ import {
   limit,
   startAfter,
   deleteDoc,
+  Timestamp,
 } from 'firebase/firestore'
 
 let articlesCollection = collection(DB, 'articles')
@@ -36,9 +37,23 @@ export const useArticlesStore = defineStore('articles', {
         console.error('Error fetching articles:', error)
       }
     },
-    async addArticle(article) {
-      const docRef = await addDoc(collection(DB, 'articles'), article)
-      this.articles.push({ id: docRef.id, ...article })
+    async addArticle(formData) {
+      //get user data
+      const userStore = useUserStore()
+      const user = userStore.getUserData
+
+      try {
+        const newArticle = doc(articlesCollection)
+        await setDoc(newArticle, {
+          ...formData,
+          owner: { uid: user.uid, firstname: `${user.firstname}`, lastname: `${user.lastname}` },
+          timestamp: serverTimestamp(),
+        })
+      } catch (error) {
+        console.error('Error adding article:', error)
+      }
+      router.push({ name: 'admin_articles', query: { reload: true } })
+      return true
     },
     async updateArticle(id, article) {
       const docRef = doc(DB, 'articles', id)

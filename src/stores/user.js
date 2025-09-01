@@ -22,6 +22,7 @@ export const useUserStore = defineStore('user', {
     auth: null,
   }),
   getters: {
+    getUserData: (state) => state.user,
     // isLoggedIn: (state) => !!state.user,
   },
   actions: {
@@ -96,8 +97,8 @@ export const useUserStore = defineStore('user', {
         const newUser = {
           uid: response.user.uid,
           email: formData.email,
-          // firstname: null,
-          // lastname: null,
+          firstname: response.user.firstname,
+          lastname: response.user.lastname,
           isAdmin: false,
         }
         // update user state

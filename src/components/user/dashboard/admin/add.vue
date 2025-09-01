@@ -1,7 +1,12 @@
 <template>
   <h1>Add Article</h1>
   <hr />
-  <Form @submit="onSubmit" :validation-schema="addArticleSchema">
+
+  <div class="text-center m-3" v-show="loading">
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+  </div>
+
+  <Form @submit="onSubmit" :validation-schema="addArticleSchema" v-if="!loading">
     <div class="mb-4">
       <Field name="game" v-slot="{ field, errorMessage, errors }">
         <input
@@ -82,17 +87,36 @@ import { addArticleSchema } from './addSchema'
 import WISYWIG from '@/utils/wisywig.vue'
 import { useArticlesStore } from '@/stores/articles'
 
+//toasts
+import { useToast } from 'vue-toast-notification'
+const $toast = useToast()
+
 const articlesStore = useArticlesStore()
 
 const ratingArray = [0, 1, 2, 3, 4, 5]
 
 const veditor = ref('')
 
+const loading = ref(false)
+
 function editUpdate(content) {
   veditor.value = content
 }
 
 const onSubmit = (values, { resetForm }) => {
-  console.log(values)
+  articlesStore
+    .addArticle(values)
+    .then(() => {
+      $toast.success('Article added successfully!')
+      resetForm()
+      veditor.value = ''
+    })
+    .catch((error) => {
+      $toast.error('Error adding article:', error.message)
+      console.error('Error adding article:', error)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
