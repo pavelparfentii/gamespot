@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import router from '@/router'
 import { useUserStore } from './user'
+import { useToast } from 'vue-toast-notification'
 
 import { DB } from '@/utils/firebase'
 import {
@@ -19,6 +20,8 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 
+const $toast = useToast()
+
 let articlesCollection = collection(DB, 'articles')
 
 export const useArticlesStore = defineStore('articles', {
@@ -28,6 +31,21 @@ export const useArticlesStore = defineStore('articles', {
     adminLastVisible: '',
   }),
   actions: {
+    async updateArticle(id, formData) {
+      try {
+        const docRef = doc(DB, 'articles', id)
+        await updateDoc(docRef, {
+          ...formData,
+        })
+        /// SHOW TOASTS
+        $toast.success('Updated !!')
+        return true
+      } catch (error) {
+        $toast.success(error.message)
+        throw new Error(error)
+      }
+    },
+
     async fetchArticles() {
       try {
         const articlesCollection = collection(DB, 'articles')
@@ -37,6 +55,21 @@ export const useArticlesStore = defineStore('articles', {
         console.error('Error fetching articles:', error)
       }
     },
+
+    async getArticleById(id) {
+      try {
+        const articleDoc = await getDoc(doc(DB, 'articles', id))
+        if (!articleDoc.exists()) {
+          throw new Error('Article not found')
+        } else {
+          return articleDoc.data()
+        }
+      } catch (error) {
+        console.error('Error fetching article by ID:', error)
+        router.push({ name: 'not_found' })
+      }
+    },
+
     async addArticle(formData) {
       //get user data
       const userStore = useUserStore()
@@ -54,14 +87,6 @@ export const useArticlesStore = defineStore('articles', {
       }
       router.push({ name: 'admin_articles', query: { reload: true } })
       return true
-    },
-    async updateArticle(id, article) {
-      const docRef = doc(DB, 'articles', id)
-      await updateDoc(docRef, article)
-      const index = this.articles.findIndex((a) => a.id === id)
-      if (index !== -1) {
-        this.articles[index] = { id, ...article }
-      }
     },
     async deleteArticle(id) {
       const docRef = doc(DB, 'articles', id)

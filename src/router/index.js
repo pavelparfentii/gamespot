@@ -12,6 +12,8 @@ import AdminArticles from '@/components/user/dashboard/admin/articles.vue'
 import AdminAddArticle from '@/components/user/dashboard/admin/add.vue'
 import AdminEditArticle from '@/components/user/dashboard/admin/edit.vue'
 
+import NotFound from '@/components/404.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -52,6 +54,11 @@ const router = createRouter({
           component: AdminEditArticle,
         },
       ],
+    },
+    {
+      path: '/:notFound(.*)*',
+      name: 'not_found',
+      component: NotFound,
     },
   ],
 })
