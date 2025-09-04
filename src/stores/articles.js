@@ -41,18 +41,26 @@ export const useArticlesStore = defineStore('articles', {
         $toast.success('Updated !!')
         return true
       } catch (error) {
-        $toast.success(error.message)
+        $toast.error(error.message)
         throw new Error(error)
       }
     },
 
-    async fetchArticles() {
+    async getAdminArticles(docLimit) {
       try {
-        const articlesCollection = collection(DB, 'articles')
-        const articlesSnapshot = await getDocs(articlesCollection)
-        this.articles = articlesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        const q = query(articlesCollection, orderBy('timestamp', 'desc'), limit(docLimit))
+        const querySnapshot = await getDocs(q)
+
+        const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1]
+        const articles = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+
+        //Update articles
+        this.adminArticles = articles
+        this.adminLastVisible = lastVisible
       } catch (error) {
         console.error('Error fetching articles:', error)
+        $toast.error('Error fetching articles')
+        throw new Error(error.message)
       }
     },
 
