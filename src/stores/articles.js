@@ -31,6 +31,19 @@ export const useArticlesStore = defineStore('articles', {
     adminLastVisible: '',
   }),
   actions: {
+    async getHomeArticles(docLimit) {
+      try {
+        const q = query(articlesCollection, orderBy('timestamp', 'desc'), limit(docLimit))
+        const querySnapshot = await getDocs(q)
+        const articles = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        this.homeArticles = articles
+      } catch (error) {
+        console.error('Error fetching home articles:', error)
+        $toast.error('Error fetching articles')
+        throw new Error(error.message)
+      }
+    },
+
     async updateArticle(id, formData) {
       try {
         const docRef = doc(DB, 'articles', id)
@@ -128,6 +141,9 @@ export const useArticlesStore = defineStore('articles', {
     },
   },
   getters: {
+    getFeaturedArticles(state) {
+      return state.homeArticles.slice(0, 2)
+    },
     // getArticles: (state) => state.articles,
     // getArticleById: (state) => (id) => state.articles.find(article => article.id === id)
   },
