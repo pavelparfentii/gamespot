@@ -45,6 +45,30 @@ export const useArticlesStore = defineStore('articles', {
         throw new Error(error)
       }
     },
+    async loadLastArticles(docLimit) {
+      try {
+        if (this.adminLastVisible) {
+          let oldArticles = this.adminArticles
+          const q = query(
+            articlesCollection,
+            orderBy('timestamp', 'desc'),
+            startAfter(this.adminLastVisible),
+            limit(docLimit),
+          )
+          const querySnapshot = await getDocs(q)
+
+          const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1]
+          const newArticles = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+
+          this.adminArticles = [...oldArticles, ...newArticles]
+
+          this.adminLastVisible = lastVisible
+        }
+        // const q = query(articlesCollection, orderBy('timestamp', 'desc'), limit(3))
+      } catch (error) {
+        $toast.error(error.message)
+      }
+    },
 
     async getAdminArticles(docLimit) {
       try {
@@ -96,10 +120,11 @@ export const useArticlesStore = defineStore('articles', {
       router.push({ name: 'admin_articles', query: { reload: true } })
       return true
     },
-    async deleteArticle(id) {
-      const docRef = doc(DB, 'articles', id)
+    async deleteArticle(articleId) {
+      const docRef = doc(DB, 'articles', articleId)
       await deleteDoc(docRef)
-      this.articles = this.articles.filter((a) => a.id !== id)
+      this.adminArticles = this.adminArticles.filter((a) => a.id !== articleId)
+      $toast.success('Deleted !!')
     },
   },
   getters: {

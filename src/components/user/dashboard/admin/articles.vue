@@ -19,7 +19,9 @@
           <td>{{ article.rating }}</td>
           <td>{{ article.timestamp.toDate().toDateString() }}</td>
           <td>
-            <v-btn variant="outline" color="red" size="small"> REMOVE </v-btn>
+            <v-btn variant="outline" color="red" size="small" @click="removeArticle(article.id)">
+              REMOVE
+            </v-btn>
           </td>
           <td>
             <v-btn
@@ -34,6 +36,13 @@
         </tr>
       </tbody>
     </v-table>
+
+    <div class="text-center m-4" v-show="btnLoad">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </div>
+    <v-btn variant="outline" class="mt-3" size="small" @click="loadArticlesHandler">
+      Load More
+    </v-btn>
   </div>
 </template>
 
@@ -51,7 +60,21 @@ const btnLoad = ref(false)
 
 const articlesStore = useArticlesStore()
 
+//remove article
+const removeArticle = (articleId) => {
+  loading.value = true
+  articlesStore.deleteArticle(articleId).finally(() => {
+    loading.value = false
+  })
+}
+
 //load more articles
+const loadArticlesHandler = () => {
+  btnLoad.value = true
+  articlesStore.loadLastArticles(3).finally(() => {
+    btnLoad.value = false
+  })
+}
 
 //get first articles
 loading.value = true
