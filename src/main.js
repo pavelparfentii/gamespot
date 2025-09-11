@@ -6,6 +6,9 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+//Masonry
+import { VueMasonryPlugin } from 'vue-masonry'
+
 //Toasts
 import ToastPlugin from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-bootstrap.css'
@@ -34,7 +37,7 @@ onAuthStateChanged(AUTH, () => {
     app.use(router)
     app.use(vuetify)
     app.use(ToastPlugin)
-
+    app.use(VueMasonryPlugin)
     app.mount('#app')
   } else {
     // User is signed out

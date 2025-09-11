@@ -141,6 +141,10 @@ export const useArticlesStore = defineStore('articles', {
     },
   },
   getters: {
+    getHomeFeaturedArticles(state) {
+      return state.homeArticles
+    },
+
     getFeaturedArticles(state) {
       return state.homeArticles.slice(0, 2)
     },

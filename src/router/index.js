@@ -7,6 +7,8 @@ import { isAuth, isLoggedIn } from '@/composables/auth'
 import Dashboard from '../components/user/dashboard/index.vue'
 import DashboardMain from '../components/user/dashboard/main.vue'
 
+import Article from '@/components/articles/article.vue'
+
 import UserProfile from '@/components/user/dashboard/pages/user_profile.vue'
 import AdminArticles from '@/components/user/dashboard/admin/articles.vue'
 import AdminAddArticle from '@/components/user/dashboard/admin/add.vue'
@@ -21,6 +23,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/article/:id',
+      name: 'article',
+      component: Article,
     },
     { path: '/signin', name: 'signin', component: Signin, beforeEnter: isLoggedIn },
     {
