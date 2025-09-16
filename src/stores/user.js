@@ -6,6 +6,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 
 import errorCodes from '@/utils/fbcodes'
+import { useToast } from 'vue-toast-notification'
+const $toast = useToast()
 
 const DEFAULT_USER = {
   uid: null,
@@ -24,6 +26,7 @@ export const useUserStore = defineStore('user', {
   getters: {
     getUserData: (state) => state.user,
     // isLoggedIn: (state) => !!state.user,
+    getUserId: (state) => state.user.uid,
   },
   actions: {
     setUser(user) {
@@ -36,6 +39,21 @@ export const useUserStore = defineStore('user', {
         return userDoc.data()
       } else {
         throw new Error('User not found')
+      }
+    },
+    async updateUserProfile(formData) {
+      try {
+        const userData = {
+          ...this.user,
+          ...formData,
+          // email: this.user.email,
+        }
+        await updateDoc(doc(DB, 'users', this.getUserId), userData)
+        this.setUser(userData)
+        $toast.success('Update')
+        return true
+      } catch (error) {
+        $toast.error(error.message)
       }
     },
     async signOut() {
